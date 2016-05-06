@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <s2argv.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[]) {
 	
