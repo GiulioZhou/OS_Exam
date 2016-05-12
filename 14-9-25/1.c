@@ -47,7 +47,6 @@ int main(int argc, char *argv[]){
 	char *path = argv[1]; //indirizzo del file da leggere
 	char *cmd[MAX_ARGS]; //vettore dei parametri
 	char cmdString[MAX_LINE]; //riga di codice
-	char *s =cmdString;
 	FILE *f;
 	pid_t *pid, winner;
 	int i = 0, status;
@@ -77,21 +76,22 @@ int main(int argc, char *argv[]){
 	fds.fd = fd[0];
 	fds.events=POLLIN; // Data other than high priority data may be read without blocking
 
-	
+	/*
 	//count the number of line
 	while ( fgets (cmdString, MAX_LINE, f)!=NULL){
 		i++;
 	}
 	printf("Il numero delle righe è: %d \n", i);
+	*/
 	
-	
-	pid = malloc(sizeof(pid_t)*i);
+	pid = malloc(sizeof(pid_t));
 	rewind(f); //void rewind(FILE *stream) sets the file position to the beginning of the file of the given stream
 	i=0;
 	
 	printf("Ora si fa sul serio \n");
 	while ( fgets (cmdString, MAX_LINE, f)!=NULL){
-		
+		pid = realloc(pid, sizeof(pid_t)*(i+1));
+		printf("Il comando è %s \n", cmdString);
 		if ( (pid[i] = fork()) == -1) {
 			printf("fork fail\n");
 			return(EXIT_FAILURE);
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
 			
 		}
 	}
-	
+	/*
 	i--;
 	
 	printf("Do il via \n");
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]){
 	}
 	
 	printf("fine");
-	
+	*/
 	fclose(f);
 	return 0;
 }
