@@ -18,7 +18,9 @@
 
 int main(){
 	
-	int efd = eventfd(0,0);
+	//       int eventfd(unsigned int initval, int flags);
+	
+	int efd = eventfd(0,0); //Provide semaphore-like semantics for reads from the new file descriptor
 	int smp = eventfd(1, EFD_SEMAPHORE);
 	int pid;
 	uint64_t u = 1, v=1;
@@ -40,12 +42,17 @@ int main(){
 			break;
 			
   default:
-			while (u){
+			while (u){ //if the number in input is 0 it will end
+				
+				//If EFD_SEMAPHORE was specified and the eventfd counter has a nonzero value, then a read(2) returns 8 bytes containing the value 1, and the counter's value is decremented by 1
 				read(smp,&v, sizeof(uint64_t));
+				
 				scanf("%d", &u);
 				write(efd, &u, sizeof(uint64_t));
 			}
 			break;
+			
+			kill(pid,SIGTERM);
 	}
 	
 	
