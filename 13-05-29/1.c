@@ -43,7 +43,7 @@ int main(){
 			while (u){
 				read(smp,&v, sizeof(uint64_t));
 				scanf("%d", &u);
-				write(efd, &u, sizeof(uint64_t ));
+				write(efd, &u, sizeof(uint64_t));
 			}
 			break;
 	}
