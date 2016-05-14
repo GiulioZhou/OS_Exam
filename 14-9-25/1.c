@@ -60,6 +60,9 @@ int main(int argc, char *argv[]){
 	
 	struct pollfd fds;
 	
+	int myPgid= getpgid(getpid());
+	printf("%d\n",myPgid);
+	
 	printf("Apro il file \n");
 	f = fopen(path, "r");
 	if (f == NULL){
@@ -75,6 +78,8 @@ int main(int argc, char *argv[]){
 	
 	fds.fd = fd[0];
 	fds.events=POLLIN; // Data other than high priority data may be read without blocking
+	
+	
 
 	/*
 	//count the number of line
@@ -90,6 +95,7 @@ int main(int argc, char *argv[]){
 	
 	printf("Ora si fa sul serio \n");
 	while ( fgets (cmdString, MAX_LINE, f)!=NULL){
+		//realloc added and deleted the line counter
 		pid = realloc(pid, sizeof(pid_t)*(i+1));
 		printf("Il comando è %s \n", cmdString);
 		if ( (pid[i] = fork()) == -1) {
@@ -97,8 +103,10 @@ int main(int argc, char *argv[]){
 			return(EXIT_FAILURE);
 		}
 		
-		if (pid == 0) {	//child
+		if (pid[i] == 0) {	//child
 			i++;
+			
+			setpgid(0, 0);
 			
 			printf("Sono il processo %d e sto aspettando \n", i);
 			poll(&fds,1,-1); //poll(struct pollfd fds[], nfds_t nfds, int timeout)
@@ -108,16 +116,17 @@ int main(int argc, char *argv[]){
 			printf("Via!\n");
 			split (cmd, cmdString);
 			//Wait event to exec the command
-			execvp(cmd[0], cmd);
-			pid[i]=getpid(); //???? si può fare???
-			printf("questo codice viene esequito? \n");
+			printf("sono il processo %d e sto per eseguire",pid[i]);
+			// execvp(cmd[0], cmd);
+			pid[i]=getpid(); //???? Can I do this??? ---> Answer: NO, these 2 line will never be execute, exept in case of error
+			//printf("questo codice viene esequito? \n");
 			
 			perror(cmd[0]);
 			return(EXIT_FAILURE);
 			
 		}
 	}
-	/*
+	
 	i--;
 	
 	printf("Do il via \n");
@@ -126,11 +135,11 @@ int main(int argc, char *argv[]){
 	
 	printf("Aspetto... \n");
 	winner = wait(&status); //pid_t wait(int *wstatus) -> wait for one child to finish
-	
+	/*
 	printf("Il vincitore è %d !, ora uccido tutti :3 \n", winner);
 	//kill all the processes
 	while(i >= 0){
-		if(pid[i] != winner){
+		if(pid[i] != winner){ //useless! The winner has already terminated
 			kill(pid[i], SIGTERM);
 		}
 		--i;
@@ -138,6 +147,12 @@ int main(int argc, char *argv[]){
 	
 	printf("fine");
 	*/
+	
+	
+	// In theory kill(0, SIGUSR1) kill all process in the process group of the sender
+	signal(SIGUSR1,SIG_IGN); //ignore, do not commit suicide!
+	kill(0, SIGUSR1); // -> I don't know why it doesn't run...
+	
 	fclose(f);
 	return 0;
 }
