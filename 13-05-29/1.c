@@ -22,7 +22,7 @@ int main(){
 	int smp = eventfd(1, EFD_SEMAPHORE);
 	int pid;
 	uint64_t u = 1, v=1;
-
+	int i=0;
 
 	
 	
@@ -31,7 +31,7 @@ int main(){
 			while (1) {
 				
 				read(efd, &u, sizeof(uint64_t));
-				for (int i=0; i<u; i++){
+				for (i=0; i<u; i++){
 					printf("x\n");
 				}
 				write(smp, &v, sizeof(uint64_t));
@@ -42,7 +42,7 @@ int main(){
   default:
 			while (u){
 				read(smp,&v, sizeof(uint64_t));
-				scanf("%" PRIu64, &u);
+				scanf("%d", &u);
 				write(efd, &u, sizeof(uint64_t ));
 			}
 			break;
