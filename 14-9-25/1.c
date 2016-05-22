@@ -106,8 +106,6 @@ int main(int argc, char *argv[]){
 		if (pid[i] == 0) {	//child
 			i++;
 			
-			setpgid(0, 0);
-			
 			printf("Sono il processo %d e sto aspettando \n", i);
 			poll(&fds,1,-1); //poll(struct pollfd fds[], nfds_t nfds, int timeout)
 			//The nfds argument specifies the size of the fds array.
@@ -116,8 +114,7 @@ int main(int argc, char *argv[]){
 			printf("Via!\n");
 			split (cmd, cmdString);
 			//Wait event to exec the command
-			printf("sono il processo %d e sto per eseguire",pid[i]);
-			// execvp(cmd[0], cmd);
+			execvp(cmd[0], cmd);
 			pid[i]=getpid(); //???? Can I do this??? ---> Answer: NO, these 2 line will never be execute, exept in case of error
 			//printf("questo codice viene esequito? \n");
 			
@@ -150,8 +147,8 @@ int main(int argc, char *argv[]){
 	
 	
 	// In theory kill(0, SIGUSR1) kill all process in the process group of the sender
-	signal(SIGUSR1,SIG_IGN); //ignore, do not commit suicide!
-	kill(0, SIGUSR1); // -> I don't know why it doesn't run...
+	signal(SIGTERM,SIG_IGN); //ignore, do not commit suicide!
+	kill(0, SIGTERM); // -> I don't know why it doesn't run...
 	
 	fclose(f);
 	return 0;
