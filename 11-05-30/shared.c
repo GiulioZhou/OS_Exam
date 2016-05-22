@@ -1,6 +1,5 @@
 #include "shared.h"
 
-
 shared_data *openShared(){
 	int fd;
 	shared_data *data;

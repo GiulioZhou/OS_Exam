@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include "shared.h"
+#include <signal.h>
 
 int main(int argc, char * argv[])
 {

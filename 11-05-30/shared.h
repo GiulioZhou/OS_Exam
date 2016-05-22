@@ -1,3 +1,5 @@
+//Disclaimer!! Remember to add -lrt in linking phase
+
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
