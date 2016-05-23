@@ -44,11 +44,7 @@ int main(int argc, char *argv[]){
 //		return events for the directory itself, and for files inside the
 //			directory.
 	
-	if (fd = inotify_init() == -1) { 	//initializes a new inotify instance and returns a file descriptor associated with a new inotify event queue.
-		fprintf(stderr, "inotify_init failed:%s\n", strerror(errno));
-		return(EXIT_FAILURE);
-	}
-	
+	fd = inotify_init();	//initializes a new inotify instance and returns a file descriptor associated with a new inotify event queue.
 	
 	if (wd=inotify_add_watch(fd, argv[1], IN_CREATE | IN_DELETE | IN_DELETE_SELF) == -1) { 	//adds a new watch, or modifies an existing watch
 		fprintf(stderr, "inotify_init failed:%s\n", strerror(errno));
@@ -64,7 +60,7 @@ int main(int argc, char *argv[]){
 			perror( "read" );
 		}
 		
-		while ( i < length ) {
+		while ( i < length && poll ) {
 			struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
 			if ( event->len ) {
 				if ( event->mask & IN_CREATE ) {
@@ -83,7 +79,7 @@ int main(int argc, char *argv[]){
 						printf( "The file %s was deleted.\n", event->name );
 					}
 				}
-				else if ( event->mask & IN_DELETE_SELF ) {
+				else if (event->mask & IN_DELETE_SELF ) {
 					printf( "Base directory deleted.\n" );
 					poll=0;
 				}
