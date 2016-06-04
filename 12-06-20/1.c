@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
 	}
 	
 	
-	while(true){
+	while(1){
 		i=0;
 		length = read( fd, buffer, BUF_LEN ); //read() attempts to read up to count bytes from file descriptor fd into the buffer starting at buf, On success, the number of bytes read is returned
 		
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 			perror( "read" );
 		}
 		
-		while ( i < length && poll ) {
+		while ( i < length) {
 			struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
 			if ( event->len ) {
 				if ( event->mask & IN_CREATE ) {
