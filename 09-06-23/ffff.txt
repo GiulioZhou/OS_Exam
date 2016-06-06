@@ -1,0 +1,5 @@
+ls -l
+#ciao hosdfas
+echo “ciao”
+#dfasdf sfasdf
+echo “hola”
