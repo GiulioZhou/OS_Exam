@@ -56,10 +56,12 @@ int main(int argc, char *argv[]){
 	command[j]=NULL;
 	
 	signalStruct.sa_sigaction = &signalHandler;
-	
+	signalStruct.sa_flags = SA_RESTART;
 
 	sigaction(sig,&signalStruct,NULL);
-	while(1){	}
+
+	while(1){
+	}
 	
 	return 0;
 }
