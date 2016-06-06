@@ -2,10 +2,11 @@
 //Il programma, usando le recenti system call inotify_init e inotify_add_watch (descritte nella pagina di manuale inotify), deve scrivere “il file e' stato aperto” ogni volta che il file viene aperto e “il file e' stato modificato” se viene modificato. Il programma deve inoltre terminare quando il file viene cancellato.
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <sys/inotify.h>
-#include <sys/type.h>
+#include <sys/types.h>
 
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )
 #define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
@@ -13,7 +14,7 @@
 int main (int argc, char *argv[]){
 	
 	if(argc!=2){
-		fprintf(sdrerr,"expected 1 parameter");
+		fprintf(stderr,"expected 1 parameter");
 		return(EXIT_FAILURE);
 	}
 	
