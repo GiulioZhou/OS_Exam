@@ -19,56 +19,107 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-//#include "mylib.h"
+#include <signal.h>
+#include <poll.h>
+#include <sys/wait.h>
+#include "mylib.h"
 
 struct comList{
-	const char *command;
+	char *command;
+	pid_t pid;
 	struct comList *next;
 };typedef struct comList *list;
 
-list insert (list head, const char *cm)
+//head insert
+void insert (list * head, char *cm, pid_t p)
 {
-	
-	if(head==NULL) {
-		head =(list)malloc(sizeof(list));
-		head->command = cm;
-		head->next=NULL;
-
-	}	else{
-		list tmp = head;
-		while (tmp->next != NULL) tmp=tmp->next;
-		tmp->next=(list)malloc(sizeof(list));
-		tmp=tmp->next;
-		tmp->command = cm;
-		tmp->next=NULL;
-
-	}
-	return head;
+	list tmp=(list)malloc(sizeof(struct comList));
+	tmp->command = malloc(sizeof(char)*strlen(cm)+1);
+	strcpy(tmp->command,cm);
+	tmp->pid=p;
+	tmp->next= *head;
+	*head=tmp;
 }
 
-void print (list lista){
-	
-	while (lista!=NULL) {
-		printf("%s\n", lista->command);
-		lista=lista->next;
+void printNamePid(pid_t pid, list head, int i)
+{
+	list p = head;
+	while(p != NULL)
+	{
+		if(p->pid == pid) printf("%d: %s", i, p->command);
+		p = p->next;
 	}
 }
+
 
 int main(){
 	
 	list lista = NULL;
 	char input[254];
+	int pid;
+	int count=0;
+	int status;
+	int fd[2]; //pipe fd for process sinc
+	struct pollfd fds; //struct for poll
+
+	
+	//opening the pipe for pollin
+	if((pipe(fd)) == -1){
+		perror("Pipe");
+		return(EXIT_FAILURE);
+	}
+	fds.fd = fd[0];
+	fds.events=POLLIN;
 	
 	fgets(input,254,stdin);
-	while (input[0]!='\n'){
-		lista=insert(lista, input);
-		printf("%s", lista->command);
+
+	while (input[0]!='\n') {
+		
+		if ( (pid = fork()) == -1) {
+			printf("fork fail\n");
+			return(EXIT_FAILURE);
+		}
+		
+		if (pid == 0) {	//child
+
+			char *currComm = malloc(sizeof(char)*strlen(input));
+			strcpy(currComm,input);
+			poll(&fds,1,-1); //struct poll, size of fds array and -1 for block until interrupt call
+							//wait until all processes are ready
+			
+			myexec(currComm);
+			
+			perror(currComm);
+			return(EXIT_FAILURE);
+		}
+		count++;
+		insert(&lista, input, pid);
+
 		fgets(input,254,stdin);
 	}
+	pid_t arrival[count];
 	
-	printf("%s\n", lista->command);
-	print(lista);
-	printf("%s\n", lista->command);
+	//tell to all the processes to start
+	write(fd[1], "g", 1);
+	
+	for(int i=0;i<count;i++){
+		arrival[i]=wait(&status);
+	}
+	
+	for(int i=0;i<count;i++){
+		printNamePid(arrival[i], lista, i);
+	}
 
-
+	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
