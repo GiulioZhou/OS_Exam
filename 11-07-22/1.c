@@ -35,6 +35,7 @@ int main (int argc, char *argv[]){
 
 	
 	while ((in_file = readdir(FD))){
+
 		
 		if (!strcmp (in_file->d_name, "."))
 			continue;
@@ -42,33 +43,25 @@ int main (int argc, char *argv[]){
 			continue;
 		if (!strncmp(in_file->d_name, ".",1))
 			continue;
-		
-		printf("%s\n",in_file->d_name);
-		/*char *extension = get_filename_ext(in_file->d_name);
-		printf("%s\n",extension);
-		if(strcmp(extension,"sh")||strcmp(extension,"")){ //or other possible file
-			*/if ( (pid = fork()) == -1) {
+
+		char *extension = get_filename_ext(in_file->d_name);
+		if(!strcmp(extension,"sh")||!strcmp(extension,"")){ //or other possible file
+			if ((pid = fork()) == -1){
 				printf("fork fail\n");
 				return(EXIT_FAILURE);
 			}
-			
 			if (pid == 0) {	//child
 				
-				/*execv(in_file->d_name,argv+1);
+				execv(in_file->d_name,argv+1);
 				
 				perror(in_file->d_name);
-				return(EXIT_FAILURE);*/
+				return(EXIT_FAILURE);
 			}
-			count++;
-		
+		}
 	}
-	printf("%d",count);
 	for(int i=0;i<count;i++){
 		wait(NULL);
 	}
-	
-	
-	
 	
 	return 0;
 }
