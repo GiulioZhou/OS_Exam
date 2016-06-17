@@ -19,9 +19,6 @@ if len(sys.argv)!=2:
 	
 	all=[]
 	for dirname, dirnames, filenames in os.walk(path1):
-		# print path to all subdirectories first.
-		
-		# print path to all filenames.
 		for filename in filenames:
 			all.append((os.path.join(dirname, filename),filename))
 	for file in all:

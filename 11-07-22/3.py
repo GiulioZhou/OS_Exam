@@ -15,6 +15,8 @@ cindirb=[]
 hindira=[]
 hindirb=[]
 
+#probably I can do better
+
 def addFile (treepath, clist,hlist):
 	for root, dirs, files in os.walk(treepath):
 		for file in files:
