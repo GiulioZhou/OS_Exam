@@ -90,6 +90,22 @@ void insert (list * head, char *cm, FILE * f)
 	*head=tmp;
 }
 
+//remove elem->next
+
+void remove (list *elem){
+	lista tmp=elem->next;
+	if(tmp->next==NULL){ //remove last elem
+		free(tmp);
+		elem->next=NULL;
+	}
+	else{	//other cases
+		lista tmp2=tmp->next;
+		free(tmp);
+		elem->next=tmp2;
+	}
+}
+
+
 int main (int argc, char* argv[]){
 	
 	if (argc!=2){
@@ -101,6 +117,7 @@ int main (int argc, char* argv[]){
 	DIR* FD1;
 	struct dirent* in_file;
 	list lista = NULL;
+	list scan,head;
 	unsigned char c[MD5_DIGEST_LENGTH];
 	struct stat statbuf;
 
@@ -118,7 +135,7 @@ int main (int argc, char* argv[]){
 	while ((in_file = readdir(FD1))){
 		if(!strncmp(in_file->d_name,".",1)) continue;							//ignoro file nascosti
 		stat(in_file->d_name, &statbuf);
-		if(S_ISDIR(statbuf.st_mode)) continue;
+		if(S_ISDIR(statbuf.st_mode)) continue;									//ignoro le directory
 		f = fopen (in_file->d_name, "rb");
 		insert(&lista, in_file->d_name, f);
 		for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", lista->hash[i]);
@@ -126,6 +143,28 @@ int main (int argc, char* argv[]){
 		printf(" %s\n",lista->name);
 		
 	}
+	head=lista;
+	while(lista!=NULL){
+		scan=lista;
+		while(scan!=NULL){
+			if(!strcmp(lista->hash,scan->next->hash)){
+				printf("Same hash!\n");
+				if(equal(lista->name,scan->next->name)){
+					printf("And they are also the same file!!\n");
+					link(lista->name,scan->next->name);
+					printf("Removing %s from the list\n",scan->next->name);
+					remove(scan->next);
+				}
+			}
+			else scan=scan->next;
+		}
+		lista=lista->next;
+	}
+	
+	while(head!=NULL){
+		printf("%s\n", head->name);
+	}
+	
 	
 	return 0;
 }
