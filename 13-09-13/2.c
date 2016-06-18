@@ -91,6 +91,7 @@ int main (int argc, char* argv[]){
 	int bytes;
 	unsigned char data[1024];
 	FILE *inFile;
+	int i
 	
 	chdir(argv[1]);
 	
@@ -108,6 +109,7 @@ int main (int argc, char* argv[]){
 		MD5_Final (c,&mdContext);
 		
 		insert(&lista, in_file->d_name, c);
+		for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", lista->hash[i]);
 		
 	}
 	
