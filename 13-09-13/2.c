@@ -69,6 +69,8 @@ void get_md5(unsigned char c[], FILE *inFile){
 	MD5_CTX mdContext;
 	int bytes;
 	unsigned char data[1024];
+	int i;
+	
 	MD5_Init (&mdContext);
 	while ((bytes = fread (data, 1, 1024, inFile)) != 0)
 		MD5_Update (&mdContext, data, bytes);
