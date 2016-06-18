@@ -79,7 +79,7 @@ void get_md5(unsigned char c[], FILE *inFile){
 }
 
 //head insert
-void insert (list * head, char *cm, File * f)
+void insert (list * head, char *cm, FILE * f)
 {
 	list tmp=(list)malloc(sizeof(struct md5_file));
 	tmp->name = malloc(sizeof(char)*strlen(cm)+1);
