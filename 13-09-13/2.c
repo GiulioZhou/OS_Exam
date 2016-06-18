@@ -59,7 +59,7 @@ int equal(char fname1[],char fname2[]){
 }
 
 struct md5_file{
-	unsigned char hash[MD5_DIGEST_LENGTH]
+	unsigned char hash[MD5_DIGEST_LENGTH];
 	char *name;
 	struct md5_file *next;
 };typedef struct md5_file *list;
