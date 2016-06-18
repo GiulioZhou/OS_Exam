@@ -69,13 +69,11 @@ void get_md5(unsigned char c[], FILE *inFile){
 	MD5_CTX mdContext;
 	int bytes;
 	unsigned char data[1024];
-	int i;
 	
 	MD5_Init (&mdContext);
 	while ((bytes = fread (data, 1, 1024, inFile)) != 0)
 		MD5_Update (&mdContext, data, bytes);
 	MD5_Final (c,&mdContext);
-	for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", c[i]);
 
 	
 }
@@ -119,6 +117,8 @@ int main (int argc, char* argv[]){
 		if(!strncmp(in_file->d_name,".",1)) continue;							//ignoro file nascosti
 		f = fopen (in_file->d_name, "rb");
 		insert(&lista, in_file->d_name, f);
+		for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", lista->hash[i]);
+
 		printf(" %s\n",lista->name);
 		
 	}
