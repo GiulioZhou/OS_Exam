@@ -64,7 +64,7 @@ struct md5_file{
 	struct md5_file *next;
 };typedef struct md5_file *list;
 
-
+//source: http://stackoverflow.com/questions/10324611/how-to-calculate-the-md5-hash-of-a-large-file-in-c
 void get_md5(unsigned char c[], FILE *inFile){
 	MD5_CTX mdContext;
 	int bytes;
@@ -102,6 +102,8 @@ int main (int argc, char* argv[]){
 	struct dirent* in_file;
 	list lista = NULL;
 	unsigned char c[MD5_DIGEST_LENGTH];
+	struct stat statbuf;
+
 	
 	FILE *f;
 	int i;
@@ -115,6 +117,8 @@ int main (int argc, char* argv[]){
 	
 	while ((in_file = readdir(FD1))){
 		if(!strncmp(in_file->d_name,".",1)) continue;							//ignoro file nascosti
+		stat(in_file->d_name, &statbuf);
+		if(S_ISDIR(statbuf.st_mode)) continue;
 		f = fopen (in_file->d_name, "rb");
 		insert(&lista, in_file->d_name, f);
 		for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", lista->hash[i]);
