@@ -93,15 +93,15 @@ void insert (list * head, char *cm, FILE * f)
 //remove elem->next
 
 void removelem (list *elem){
-	list tmp=*elem->next;
+	list tmp=(*elem)->next;
 	if(tmp->next==NULL){ //remove last elem
 		free(tmp);
-		*elem->next=NULL;
+		(*elem)->next=NULL;
 	}
 	else{	//other cases
 		list tmp2=tmp->next;
 		free(tmp);
-		*elem->next=tmp2;
+		(*elem)->next=tmp2;
 	}
 }
 
