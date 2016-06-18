@@ -64,13 +64,28 @@ struct md5_file{
 	struct md5_file *next;
 };typedef struct md5_file *list;
 
+
+void get_md5(unsigned char c[], FILE *inFile){
+	MD5_CTX mdContext;
+	int bytes;
+	unsigned char data[1024];
+	MD5_Init (&mdContext);
+	while ((bytes = fread (data, 1, 1024, inFile)) != 0)
+		MD5_Update (&mdContext, data, bytes);
+	MD5_Final (c,&mdContext);
+	for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", c[i]);
+
+	
+}
+
 //head insert
-void insert (list * head, char *cm, char *md)
+void insert (list * head, char *cm, File * f)
 {
 	list tmp=(list)malloc(sizeof(struct md5_file));
 	tmp->name = malloc(sizeof(char)*strlen(cm)+1);
 	tmp->name=cm;
-	strcpy(tmp->hash, md);
+	get_md5(tmp->hash,f);
+	//strcpy(tmp->hash, md);
 	tmp->next= *head;
 	*head=tmp;
 }
@@ -87,10 +102,8 @@ int main (int argc, char* argv[]){
 	struct dirent* in_file;
 	list lista = NULL;
 	unsigned char c[MD5_DIGEST_LENGTH];
-	MD5_CTX mdContext;
-	int bytes;
-	unsigned char data[1024];
-	FILE *inFile;
+	
+	FILE *f;
 	int i;
 	
 	chdir(argv[1]);
@@ -102,14 +115,8 @@ int main (int argc, char* argv[]){
 	
 	while ((in_file = readdir(FD1))){
 		if(!strncmp(in_file->d_name,".",1)) continue;							//ignoro file nascosti
-		inFile = fopen (in_file->d_name, "rb");
-		MD5_Init (&mdContext);
-		while ((bytes = fread (data, 1, 1024, inFile)) != 0)
-			MD5_Update (&mdContext, data, bytes);
-		MD5_Final (c,&mdContext);
-		
-		insert(&lista, in_file->d_name, c);
-		for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", lista->hash[i]);
+		f = fopen (in_file->d_name, "rb");
+		insert(&lista, in_file->d_name, f);
 		printf(" %s\n",lista->name);
 		
 	}
