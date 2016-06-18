@@ -83,6 +83,11 @@ except OSError, e:		#just ignore errno 17 -> race condition problem
 	if e.errno != 17:
 		raise
 	pass
+			   
+#Copy path file to path2 file, if path2 exists, it will replace the content
+from shutil import copyfile
+copyfile(path, path2)
+
 
 ----------------------------------
 			   
