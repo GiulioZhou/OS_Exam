@@ -91,7 +91,7 @@ int main (int argc, char* argv[]){
 	int bytes;
 	unsigned char data[1024];
 	FILE *inFile;
-	int i
+	int i;
 	
 	chdir(argv[1]);
 	
