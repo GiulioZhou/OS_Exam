@@ -38,6 +38,7 @@ int main (int argc, char *argv[]){
 	while ((in_file = readdir(FD))){
 		n=m;
 		text=1;
+		tmp=0;
 		if(!strncmp(in_file->d_name,".",1)) continue;
 
 		if(lstat(in_file->d_name, &filestat) == -1) {
