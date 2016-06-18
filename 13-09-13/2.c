@@ -110,6 +110,7 @@ int main (int argc, char* argv[]){
 		
 		insert(&lista, in_file->d_name, c);
 		for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", lista->hash[i]);
+		printf(" %s\n",lista->name);
 		
 	}
 	
