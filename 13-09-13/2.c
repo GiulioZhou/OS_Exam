@@ -92,7 +92,7 @@ void insert (list * head, char *cm, FILE * f)
 
 //remove elem->next
 
-void remove (list *elem){
+void removelem (list *elem){
 	lista tmp=elem->next;
 	if(tmp->next==NULL){ //remove last elem
 		free(tmp);
@@ -153,7 +153,7 @@ int main (int argc, char* argv[]){
 					printf("And they are also the same file!!\n");
 					link(lista->name,scan->next->name);
 					printf("Removing %s from the list\n",scan->next->name);
-					remove(scan->next);
+					removelem(scan->next);
 				}
 			}
 			else scan=scan->next;
