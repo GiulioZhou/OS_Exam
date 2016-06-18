@@ -69,7 +69,7 @@ void insert (list * head, char *cm, char *md)
 {
 	list tmp=(list)malloc(sizeof(struct md5_file));
 	tmp->name = malloc(sizeof(char)*strlen(cm)+1);
-	strcpy(tmp->name,cm);
+	tmp->name=cm;
 	strcpy(tmp->hash, md);
 	tmp->next= *head;
 	*head=tmp;
