@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
 		return(-1);
 	}
 	
-	int j=0;
+	int j=0,i;
 	int sig=atoi(argv[1]);
 	struct sigaction signalStruct;
 	
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]){
 	printf("my pid is: %d\n", pid);
 
 	
-	for (int i =2; i<argc;i++){
+	for ( i =2; i<argc;i++){
 		
 		command[j]=argv[i];
 		j++;

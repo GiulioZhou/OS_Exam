@@ -73,6 +73,25 @@ int equal(char fname1[],char fname2[]){
 	
 }
 
+struct md5_file{ //list of files with their md5
+	unsigned char hash[MD5_DIGEST_LENGTH];
+	char *name;
+	struct md5_file *next;
+};typedef struct md5_file *list;
+
+//put the md5 of inFile in the string c
+//source: http://stackoverflow.com/questions/10324611/how-to-calculate-the-md5-hash-of-a-large-file-in-c
+void get_md5(unsigned char c[], FILE *inFile){
+	MD5_CTX mdContext;
+	int bytes;
+	unsigned char data[1024];
+	
+	MD5_Init (&mdContext);
+	while ((bytes = fread (data, 1, 1024, inFile)) != 0)
+		MD5_Update (&mdContext, data, bytes);
+	MD5_Final (c,&mdContext);
+}
+
 
 //return true if the string is in ASCII form (range 1-127), or it control only if the first bit is 0
 isascii("stringa");
@@ -91,6 +110,26 @@ if (argc != 2){
 	return(EXIT_FAILURE);
 }
 
+
+//----------SIGNAL HANDLER------------
+
+//Better to use sigaction instead of signal
+
+#include <signal.h>
+
+static void signalHandler (int sig, siginfo_t *siginfo, void *context)
+{
+	//do something, remember to put some global variable, cause you can't pass argument to this handler
+}
+
+// in the main
+
+struct sigaction signalStruct;
+
+signalStruct.sa_sigaction = &signalHandler;
+signalStruct.sa_flags = SA_RESTART;
+
+sigaction(sig,&signalStruct,NULL);  //when a signal with signumber sig rise, it will be handled by signalHandler
 
 //-------------DIRECTORY-------------
 
@@ -133,6 +172,10 @@ while ((in_file = readdir(FD))){
 	if (!strcmp (in_file->d_name, ".."))
 		continue;
 
+	if (!strncmp(in_file->d_name, ".",1))
+			continue;	//it compare the first char of the string, this ignore all hidden files
+
+
 	//fai qualcosa con in_file->d_name
 	
 	/* Open directory entry file for common operation */
@@ -168,6 +211,24 @@ time_t t;
 stat("file name", &statubuf); //oppure lstat
 t = file.st_mtime;
 S_ISREG(statbuf.st_mode); //true se il file è un file regolare
+
+
+//--------------TIME----------------
+
+//calculate the time passed
+
+struct timeval tval_before, tval_after, tval_result;
+
+gettimeofday(&tval_before, NULL); //get the start time
+
+//do something
+
+gettimeofday(&tval_after, NULL); //get end time
+
+timersub(&tval_after, &tval_before, &tval_result); //get the time passed
+
+printf("Ping: %ld sec and %06ld usec\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+//the struct is formed by seconds and microseconds
 
 
 //--------------INOTIFY---------------
@@ -264,8 +325,60 @@ write(fd[1], "g", 1);
 
 wait(&status);
 
+//Pipe serio!
+
+int parent_fd[2];		//fd[0] e` il canale di reading, fd[1] e` quello di writing
+int child_fd[2];
+int pid;
 
 
+pid=fork();
+if(pid==0){
+		
+	close(parent_fd[1]); //questo canale e` di lettura perche` chiudi quello di scrittura
+	close(child_fd[0]);	//questo canale e` di scrittura
+	while(1){	
+		if(read(parent_fd[0],childReadbuff,40)==-1) { // legge nel buffer
+			printf("Oh dear, something went wrong with child read()! %s\n", strerror(errno));
+		}
+		if(write(child_fd[1],childReadbuff,40)==-1){  //scrive nel buffer
+			printf("Oh dear, something went wrong with child write()! %s\n", strerror(errno));
+		}
+	}
+}
+else{
+	close(parent_fd[0]);
+	close(child_fd[1]);
+	
+	for(i=0;i<100000;i++){
+		if(write(parent_fd[1],mess,40)==-1){
+			
+			printf("Oh dear, something went wrong with child write()! %s\n", strerror(errno));
+		}
+		if(read(child_fd[0],parReadbuff,40)==-1){
+			printf("Oh dear, something went wrong with parent read()! %s\n", strerror(errno));
+		}
+
+}
+		
+kill(pid,SIGTERM);
+
+
+//------------EXEC------------
+
+//differenze tra i vari exec:
+// se ha un l significa che gli argomenti sono a lista, mentre v sono a vettore
+// se ha p significa che il filename viene ricercato in path, mentre senza niente serve il path completo
+//se ha la e gli passi l ambiente tramite vettore
+
+//execl, execlp, execle, exec, execvp, execvpe
+
+//if we have to pass an environment
+
+char NCOPIA[10];
+sprintf(NCOPIA,"NCOPIA=%d",i);	//format the input and sends the output to a string 
+char *env[2]={NCOPIA,0};		// the environment is a collection of strings, terminated with 
+execve(path,argv+2,env);
 
 
 
