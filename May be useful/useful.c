@@ -103,6 +103,75 @@ link(src , dest);
 memset(array, 0, arraysize);
 
 
+
+//-----------LIST-------------
+
+struct structlist{
+	char *name;
+	struct structlist *next;
+};typedef struct structlist *list;
+
+//head insert
+void insert (list * head, char *cm)
+{
+	list tmp=(list)malloc(sizeof(struct structlist);
+	tmp->name = malloc(sizeof(char)*strlen(cm)+1);
+	tmp->name=cm;
+	tmp->next= *head;
+	*head=tmp;
+}
+
+//remove elem->next but it doesn't work
+void removelem (list *elem){
+	list tmp=(*elem)->next;
+	if(tmp->next==NULL){ //remove last elem
+		free(tmp);
+		(*elem)->next=NULL;
+	}
+	else{	//other cases
+		list tmp2=tmp->next;
+		free(tmp);
+		(*elem)->next=tmp2;
+	}
+}
+
+// Insert a file element into the list, ordered by a value
+file *insert(file *head, file *f) {
+
+	// List is empty
+	if (!head) {
+		f->next = NULL;
+		return f;
+	}
+	
+	// The new file extension is less then the head extension
+	if (f->ext < head->ext) { 
+		f->next = head;
+		return f;
+	}
+
+	file *n = head;
+	do {
+		// Append
+		if (!n->next) {
+			n->next = f;
+			f->next = NULL;
+			break;
+		}
+		
+		// Insert
+		if (n->next->ext > f->ext) {
+			f->next = n->next;
+			n->next = f;
+			break;
+		}
+	} while ((n = n->next));
+	
+	return head;
+}
+
+
+
 //------------ERROR HANDLER----------
 
 if (argc != 2){
